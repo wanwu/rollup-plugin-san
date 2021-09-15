@@ -1,0 +1,75 @@
+{
+  "name": "rollup-plugin-san",
+  "version": "1.0.0",
+  "description": "A rollup plugin supports `.san` file.",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "prebuild": "rm -rf dist/*",
+    "example": "cd examles/simple && npm run dev",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wanwu/rollup-plugin-san.git"
+  },
+  "keywords": [
+    "san",
+    "rollup"
+  ],
+  "author": "vanishcode",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wanwu/rollup-plugin-san/issues"
+  },
+  "homepage": "https://github.com/wanwu/rollup-plugin-san#readme",
+  "dependencies": {
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.6",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@types/hash-sum": "^1.0.0",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.9.1",
+    "debug": "^4.3.2",
+    "hash-sum": "^2.0.0",
+    "htmlparser2": "^7.1.2",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.1.2",
+    "magic-string": "^0.25.7",
+    "postcss": "^8.3.7",
+    "postcss-js": "^3.0.3",
+    "postcss-modules": "^4.2.2",
+    "prettier": "^2.4.0",
+    "qs": "^6.10.1",
+    "rollup": "^2.56.3",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-postcss": "^4.0.1",
+    "rollup-pluginutils": "^2.8.2",
+    "san": "^3.10.10",
+    "san-anode-utils": "^3.10.0",
+    "san-eslint-parser": "^2.0.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": [
+      "prettier --write"
+    ]
+  }
+}

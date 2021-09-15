@@ -1,0 +1,22 @@
+<template>
+  <div>
+    <div class="content">Hello {{name}}!</div>
+    <child name="san child"></child>
+    <h1 class="ok">css</h1>
+  </div>
+</template>
+
+<script>
+import child from './child.san'
+
+export default {
+  initData() {
+    return {
+      name: "San.js",
+    };
+  },
+  components: {
+    'child': child
+  }
+};
+</script>

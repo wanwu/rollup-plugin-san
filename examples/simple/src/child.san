@@ -1,0 +1,25 @@
+<template>
+  <div class="{{$style.child}} ok">{{name}}</div>
+</template>
+
+<script>
+export default {}
+</script>
+
+<style module>
+.child {
+  color: red;
+}
+</style>
+
+<style scoped>
+.ok {
+  font-size: 20px;
+}
+</style>
+
+<style>
+div {
+  margin: 10px;
+}
+</style>
