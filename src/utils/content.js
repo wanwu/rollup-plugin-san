@@ -8,9 +8,10 @@
  * @description 入口
  */
 
-const path = require("path");
-const MagicString = require("magic-string");
+import path from "path";
+import MagicString  from "magic-string";
 
+import debug from "debug";
 /**
  * 深度遍历
  *
@@ -59,57 +60,9 @@ function stringManager(code, ast) {
   return s;
 }
 
-/**
- * 将内容块从文档中截取出来
- *
- * @param {string} source 源文件
- * @param {Object} node 要截取的内容块所在节点
- * @param {boolean=} needMap 是否需要生成 sourcemap，默认为 false
- * @param {Object=} ast 源文件对应的 HTML AST
- * @param {string=} resourcePath 源文件的文件路径
- * @param {string=} prefix 截取后的代码块前缀，默认为空
- * @param {string=} suffix 截取后的代码块后缀，默认为空
- * @return {Object} 内容 {code, map}
- */
-export function getContent(
-  source,
-  node,
-) {
-    return {
-        code: source.slice(startIndex, endIndex + 1),
-    }
-  let { startIndex, endIndex } = getContentRange(node, source);
-  if (!needMap) {
-    return {
-      code: prefix + source.slice(startIndex, endIndex + 1) + suffix,
-    };
-  }
+export function getContentRange(node, source) {
+  debug('getContentRange: ', source);
 
-  let s = stringManager(source, ast);
-  s.remove(0, startIndex);
-  s.remove(endIndex + 1, source.length);
-
-  if (prefix) {
-    s.prepend(prefix);
-  }
-
-  if (suffix) {
-    s.append(suffix);
-  }
-
-//   let map = s.generateMap({
-//     file: path.basename(resourcePath),
-//     source: resourcePath,
-//     includeContent: true,
-//   });
-
-  return {
-    code: s.toString(),
-    map: {}// JSON.parse(map.toString()),
-  };
-}
-
-function getContentRange(node, source) {
   let { startIndex, endIndex } = node;
 
   const max = source.length;
@@ -124,10 +77,5 @@ function getContentRange(node, source) {
   startIndex++;
   endIndex--;
 
-  // 当 script 中存在 类似 var a = '<div></div>' 的字符串时，htmlparser2 对于 script 块的 children endIndex 会标定到 var a = ' 的这个位置来，明显是错的。
-
-  // let children = node.children;
-  // let startIndex = children[0].startIndex;
-  // let endIndex = children[children.length - 1].endIndex;
   return { startIndex, endIndex };
 }

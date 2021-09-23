@@ -1,6 +1,5 @@
 import babel from "rollup-plugin-babel";
-var pkg = require("./package.json");
-var external = Object.keys(pkg.dependencies);
+import { uglify } from "rollup-plugin-uglify";
 
 export default {
   input: "src/index.js",
@@ -9,6 +8,7 @@ export default {
       exclude: "node_modules/**",
       runtimeHelpers: true,
     }),
+    uglify(),
   ],
   output: [
     {
@@ -29,6 +29,12 @@ export default {
     "path",
     "rollup-pluginutils",
     "san",
+    "hash-sum",
+    "postcss",
+    "dom-serializer",
+    "san-anode-utils",
+    "postcss-selector-parser",
+    "postcss-modules",
     "@babel/runtime/helpers/asyncToGenerator",
     "@babel/runtime/helpers/defineProperty",
     "@babel/runtime/regenerator",

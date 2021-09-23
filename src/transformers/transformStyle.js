@@ -5,8 +5,10 @@
  * See LICENSE file in the project root for license information.
  *
  * @file compileStyle.js
- * @description 编译 style 标签的插值替换
+ * @description 添加 scopeid 和 css module 编译
  */
+
+// 在这里处理所有样式代码，降低耦合性
 
 import hash from "hash-sum";
 import postcss from "postcss";

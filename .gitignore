@@ -99,3 +99,11 @@ dist
 
 # TernJS port file
 .tern-port
+
+yarn-error.log
+
+# no need lock file
+yarn.lock
+package-lock.json
+
+.vscode/

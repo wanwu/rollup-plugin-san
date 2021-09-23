@@ -19,7 +19,7 @@ import { getTemplateCode } from "./blocks/template";
 import { getScriptCode } from "./blocks/script";
 import { getStyleCode } from "./blocks/style";
 
-import compileTemplate from "./compilers/compileTemplate";
+import { addScopeID } from "./transformers/transformTemplate";
 
 import { setDescriptor, getDescriptor } from "./utils/descriptors";
 import { parseQuery } from "./utils/query";
@@ -126,7 +126,7 @@ export default function SanPlugin(userOptions = {}) {
           debug(`transform template (${id}), with code\n${code}`);
 
           return {
-            code: `export default \`${compileTemplate(
+            code: `export default \`${addScopeID(
               getDescriptor(query.filename).template[0].content,
               query.filename
             )}\``,

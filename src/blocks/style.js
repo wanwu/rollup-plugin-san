@@ -12,7 +12,7 @@ import cssModules from "../utils/cssModules";
 
 import postcss from "postcss";
 import postcssPlugin from "../utils/scopedCSS";
-import hash_sum from "hash-sum";
+import hash from "hash-sum";
 /**
  * 根据 san 文件代码块生成对应 style 部分的 import 代码
  *
@@ -69,10 +69,12 @@ export async function getStyleCode(descriptor, options, query) {
   let code = `${options.esModule ? "export default" : "module.exports ="} `;
   const style = descriptor.style[query.index];
 
+  const scopedID = `data-s-${hash(query.filename)}`;
+
   const postcssResult = await cssModules(style.content);
-  const scopedCSS = await postcss([
-    postcssPlugin(`data-s-${hash_sum(query.filename)}`),
-  ]).process(style.content).css
+  const scopedCSS = await postcss([postcssPlugin(scopedID)]).process(
+    style.content
+  ).css;
 
   return {
     content:
@@ -80,10 +82,9 @@ export async function getStyleCode(descriptor, options, query) {
         ? query.lang === ".js"
           ? `${code}${JSON.stringify(postcssResult.cssMap)}`
           : `${postcssResult.css}`
-        : 
-        query.scoped
+        : query.scoped
         ? `${scopedCSS}`
-        :`${style.content}`,
+        : `${style.content}`,
     map: {
       mappings: "",
     },

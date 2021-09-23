@@ -25,7 +25,7 @@ export function parseQuery(id) {
       src: "src" in parsed,
       scoped: "scoped" in parsed,
       // <style> 用
-      index: +parsed.index,
+      index: Number(parsed.index),
     };
   }
 

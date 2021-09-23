@@ -2,8 +2,14 @@
   <div class="{{$style.child}} ok">{{name}}</div>
 </template>
 
-<script>
-export default {}
+<script lang="ts">
+export default {
+  initData(): any {
+    return {
+      foo: 'hello'
+    }
+  },
+}
 </script>
 
 <style module>
@@ -14,7 +20,7 @@ export default {}
 
 <style scoped>
 .ok {
-  font-size: 20px;
+  font-size: 40px;
 }
 </style>
 
