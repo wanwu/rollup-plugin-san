@@ -10,7 +10,7 @@
 
 import createDebugger from "debug";
 
-const debug = createDebugger("rollup-plugin-san");
+const debug = createDebugger("rollup-plugin-san:utils/descriptors.js");
 const cache = new Map();
 
 /**

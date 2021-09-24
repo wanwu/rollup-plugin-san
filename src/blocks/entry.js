@@ -8,14 +8,18 @@
  * @description 生成导入语句
  */
 import path from "path";
-import { setDescriptor } from "../utils/descriptors";
+
+import hash from "hash-sum";
+import createDebugger from "debug";
+import { parseDocument } from "htmlparser2";
+
 import { generateTemplateImport } from "../blocks/template";
 import { generateScriptImport } from "../blocks/script";
 import { generateStyleImport } from "../blocks/style";
+import { setDescriptor } from "../utils/descriptors";
+import { getContentRange } from "../utils/content";
 
-import { getContentRange } from '../utils/content';
-
-const { parseDocument } = require("htmlparser2");
+const debug = createDebugger("rollup-plugin-san:blocks/entry.js");
 
 const ELEMENT_TYPES = ["tag", "script", "style"];
 
@@ -35,7 +39,12 @@ export function getAST(source) {
   return doc.children || [];
 }
 
-export function generateDescriptor(source) {
+/**
+ *
+ * @param {*} source
+ * @returns
+ */
+export function generateDescriptor(source, query) {
   let ast = getAST(source);
 
   let descriptor = {};
@@ -44,39 +53,63 @@ export function generateDescriptor(source) {
       ELEMENT_TYPES.indexOf(node.type) > -1 &&
       ["template", "script", "style"].indexOf(node.name) > -1
     ) {
-      const {startIndex, endIndex} = getContentRange(node, source);
+      const { startIndex, endIndex } = getContentRange(node, source);
       node.content = source.slice(startIndex, endIndex + 1);
       if (!descriptor[node.name]) {
         descriptor[node.name] = [];
       }
       descriptor[node.name].push(node);
+      descriptor.filename = query.filename;
     }
   }
   return { descriptor, ast };
 }
 
-export function generateEntryCode(source, id, options) {
-  const descriptor = generateDescriptor(source).descriptor;
-  setDescriptor(id, descriptor);
+/**
+ *
+ * @param {*} source
+ * @param {*} query
+ * @param {*} options
+ * @returns
+ */
+export function generateEntryCode(source, query, options) {
+  debug("生成入口：", source, query, options);
 
-  const normalizePath = path.resolve("../../src/runtime/index.js");
+  const filename = query.filename;
+  const scopeId = hash(filename);
 
-  const code = `
-  ${
+  const { descriptor } = generateDescriptor(source, query);
+  // 缓存以提高性能
+  setDescriptor(filename, descriptor);
+
+  const hasScoped =
+    descriptor.style && descriptor.style.some((s) => s.attribs.scoped);
+
+  const normalizePath = path.resolve("../src/runtime/index.js");
+  const normalizeImport = `${
     options.esModule
       ? `import normalize from '${normalizePath}';`
       : `var normalize = require('${normalizePath}').default;`
-  }
-  ${generateTemplateImport(descriptor, id, options)}
-  ${generateScriptImport(descriptor, id, options)}
-  ${generateStyleImport(descriptor, id, options)}
+  }`;
 
-  ${
+  const templateImport = generateTemplateImport(descriptor, scopeId, options);
+  const scriptImport = generateScriptImport(descriptor, scopeId, options);
+  const stylesImport = generateStyleImport(descriptor, scopeId, options);
+
+  const normalizeExport = `${
     options.esModule ? "export default" : "module.exports.default ="
   } normalize(script, template, injectStyles);`;
 
+  const output = [
+    normalizeImport,
+    templateImport,
+    scriptImport,
+    stylesImport,
+    normalizeExport,
+  ];
+
   return {
-    code,
+    code: output.join("\n"),
     map: {
       mappings: "",
     },

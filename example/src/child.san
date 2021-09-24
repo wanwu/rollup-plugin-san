@@ -2,9 +2,9 @@
   <div class="{{$style.child}} ok">{{name}}</div>
 </template>
 
-<script lang="ts">
+<script>
 export default {
-  initData(): any {
+  initData() {
     return {
       foo: 'hello'
     }

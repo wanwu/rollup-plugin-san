@@ -8,24 +8,60 @@
  * @description 处理template块的代码，功能包括添加 scopeid 和 anode、apack 编译 以及资源 uri 转换
  */
 
+import createDebugger from "debug";
 import hash from "hash-sum";
-import postcss from "postcss";
 import render from "dom-serializer";
-
-import { getAST } from "../blocks/entry";
-import postcssPlugin from "../utils/scopedCSS";
 import aNodeUtils from "san-anode-utils";
 
-const addId = (node, id) => {
-  if (!node.attribs) {
-    node.attribs = {};
+import { getAST } from "../blocks/entry";
+
+const debug = createDebugger(
+  "rollup-plugin-san:transformers/transformTemplate.js"
+);
+
+const compileTemplateTypes = ["aPack", "aNode", "none"];
+
+/**
+ *
+ * @param {*} source
+ * @param {*} query
+ * @param {*} options
+ * @returns
+ */
+function compileTemplate(source, query, options) {
+  let code = source;
+
+  // 优先使用template上面的compileTemplate
+  const compileTpl = query.compileTemplate || options.compileTemplate;
+  if (compileTpl && compileTemplateTypes.includes(compileTpl)) {
+    if (query.lang !== "html") {
+      throw new Error(
+        "attribute `compileTemplate` can only used when `lang` is `html`"
+      );
+    }
+
+    const aNode = aNodeUtils.parseTemplate(source);
+
+    debug("启动 compileTemplate 功能：", aNode);
+
+    switch (compileTpl) {
+      case "aNode":
+        code = aNode;
+        break;
+      case "aPack":
+        if (aNode.children.length) {
+          const aPack = aNodeUtils.pack(aNode.children[0]);
+          code = aPack;
+        }
+        break;
+      case "none":
+      default:
+        break;
+    }
   }
-  node.attribs[`data-s-${id}`] = "";
-  if (node.children) {
-    node.children.map((c) => addId(c, id));
-  }
-  return node;
-};
+
+  return code;
+}
 
 /**
  * 预处理template增加属性，读出设置scoped的style模块重写选择器
@@ -34,7 +70,7 @@ const addId = (node, id) => {
  * @param {string} resourcePath 资源路径 for preparse
  * @return {string} 转换完的代码文本
  */
-export function addScopeID(source, resourcePath) {
+function addScopeID(source, resourcePath) {
   const id = hash(resourcePath);
   let ast = getAST(source);
 
@@ -47,34 +83,22 @@ export function addScopeID(source, resourcePath) {
   });
 }
 
-export function compileTemplate(source, query, options) {
-  let code = source;
-  const compileTemplateTypes = ["aPack", "aNode"];
-
-  // 优先使用template上面的compileTemplate
-  const compileTpl = query.compileTemplate || options.compileTemplate;
-  if (compileTpl && compileTemplateTypes.includes(compileTpl)) {
-    if (query.lang !== "html") {
-      throw new Error(
-        "attribute `compileTemplate` can only used when `lang` is `html`"
-      );
-    }
-
-    const aNode = aNodeUtils.parseTemplate(source);
-    switch (compileTpl) {
-      case "aNode":
-        code = aNode;
-        break;
-      case "aPack":
-        if (aNode.children.length) {
-          const aPack = aNodeUtils.pack(aNode.children[0]);
-          code = aPack;
-        }
-        break;
-      default:
-        break;
-    }
+/**
+ *
+ * @param {*} root
+ * @param {*} id
+ * @returns
+ */
+function addId(root, id) {
+  if (!root.attribs) {
+    root.attribs = {};
   }
 
-  return code;
+  root.attribs[`data-s-${id}`] = "";
+
+  if (root.children) {
+    root.children.map((node) => addId(node, id));
+  }
+
+  return root;
 }

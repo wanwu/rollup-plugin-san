@@ -1,5 +1,6 @@
 import babel from "rollup-plugin-babel";
 import { uglify } from "rollup-plugin-uglify";
+import pkg from "./package.json";
 
 export default {
   input: "src/index.js",
@@ -27,17 +28,10 @@ export default {
     "debug",
     "qs",
     "path",
-    "rollup-pluginutils",
-    "san",
-    "hash-sum",
-    "postcss",
-    "dom-serializer",
-    "san-anode-utils",
-    "postcss-selector-parser",
-    "postcss-modules",
+    "@babel/runtime/helpers/readOnlyError",
     "@babel/runtime/helpers/asyncToGenerator",
     "@babel/runtime/helpers/defineProperty",
     "@babel/runtime/regenerator",
     "@babel/runtime/helpers/slicedToArray",
-  ],
+  ].concat(Object.keys(pkg.dependencies)),
 };

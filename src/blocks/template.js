@@ -7,46 +7,55 @@
  * @file template.js
  * @description 生成 template code 导入
  */
-import qs from "qs";
+import createDebugger from "debug";
 
-export function generateTemplateImport(descriptor, id, options) {
-  if (!descriptor.template || !descriptor.template.length) {
-    return "var template;";
+import { formatQuery } from "../utils/query";
+
+const debug = createDebugger("rollup-plugin-san:blocks/template.js");
+
+/**
+ * 
+ * @param {*} descriptor 
+ * @param {*} scopeId 
+ * @param {*} options 
+ * @returns 
+ */
+export function generateTemplateImport(descriptor, scopeId, options) {
+  debug("generateTemplateImport", descriptor, scopeId, options);
+
+  let templateImport = "var template;\n";
+
+  if (descriptor.template && descriptor.template.length) {
+    const template = descriptor.template[0];
+
+    const src = template.attribs.src || descriptor.filename;
+    const idQuery = `&id=${scopeId}`;
+    const srcQuery = template.attribs.src ? `&src` : ``;
+    const attrsQuery = formatQuery(template.attribs, "js", true);
+    const query = `?san&type=template${idQuery}${srcQuery}${attrsQuery}`;
+
+    const resource = src + query;
+
+    templateImport = options.esModule
+      ? `import template from '${resource}';`
+      : `var template = require('${resource}');`;
   }
 
-  let template = descriptor.template[0];
-  let resource;
-
-  if (template.attribs.src) {
-    resource = template.attribs.src;
-  } else {
-    let resourcePath = id.replace(/\\/g, "/");
-    let query = Object.assign(
-      {
-        lang: "html",
-      },
-      template.attribs,
-      {
-        san: "",
-        type: "template",
-        // TODO
-        "": "fake.js",
-      }
-    );
-    resource = `${resourcePath}?${qs.stringify(query)}`;
-  }
-  return options.esModule
-    ? `import template from '${resource}';`
-    : `var template = require('${resource}');`;
+  return templateImport;
 }
 
-export function getTemplateCode(descriptor, options) {
-  let code = `${options.esModule ? "export default" : "module.exports ="} `;
-
+/**
+ * 
+ * @param {*} descriptor 
+ * @param {*} options 
+ * @returns 
+ */
+export function getTemplateCode(descriptor, query, options) {
+  const code = `${options.esModule ? "export default" : "module.exports ="}`;
   const template = descriptor.template[0];
 
   return {
-    content: `${code}\`${template.content}\``,
+    code: `${code} \`${template.content}\``,
     map: {
       mappings: "",
     },

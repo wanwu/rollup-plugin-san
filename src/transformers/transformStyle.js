@@ -10,23 +10,31 @@
 
 // 在这里处理所有样式代码，降低耦合性
 
-import hash from "hash-sum";
+import createDebugger from "debug";
 import postcss from "postcss";
-import render from "dom-serializer";
+import postcssModules from "postcss-modules";
 
-import { getAST } from "../blocks/entry";
 import postcssPlugin from "../utils/scopedCSS";
 
-const addId = (node, id) => {
-  if (!node.attribs) {
-    node.attribs = {};
-  }
-  node.attribs[`data-s-${id}`] = "";
-  if (node.children) {
-    node.children.map((c) => addId(c, id));
-  }
-  return node;
-};
+const debug = createDebugger(
+  "rollup-plugin-san:src/transformers/transformStyle.js"
+);
+
+export function cssModules(css, options) {
+  let result;
+  let cssMap = {};
+
+  let postcssResult = await postcss([
+    postcssModules({
+      getJSON: function (_, json) {
+        cssMap = json;
+      },
+    }),
+  ]).process(css, { from: undefined });
+
+  result = Object.assign(postcssResult, { cssMap });
+  return result;
+}
 
 /**
  * 预处理template增加属性，读出设置scoped的style模块重写选择器
@@ -35,41 +43,8 @@ const addId = (node, id) => {
  * @param {string} resourcePath 资源路径 for preparse
  * @return {string} 转换完的代码文本
  */
-export default function (source, resourcePath) {
-  const id = hash(resourcePath);
-  let ast = getAST(source);
+export async function addScopedId(source, scopedID) {
+  const { css } = await postcss([postcssPlugin(scopedID)]).process(source);
 
-  let hasScope = false;
-
-  for (let node of ast) {
-    if (
-      node.name === "style" &&
-      node.attribs &&
-      Reflect.has(node.attribs, "scoped")
-    ) {
-      hasScope = true;
-      if (node.children && node.children.length) {
-        node.children[0].data = postcss([
-          postcssPlugin(`data-s-${id}`),
-        ]).process(node.children[0].data).css;
-      }
-    }
-  }
-
-  for (let node of ast) {
-    if (
-      hasScope &&
-      node.name === "template" &&
-      node.children &&
-      node.children.length
-    ) {
-      for (let tag of node.children) {
-        tag.type === "tag" && addId(tag, id);
-      }
-    }
-  }
-
-  return render(ast, {
-    decodeEntities: false,
-  });
+  return css;
 }

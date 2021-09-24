@@ -9,7 +9,7 @@
     "rollup-plugin-browsersync": "^1.3.3",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-postcss": "^4.0.1",
-    "rollup-plugin-san": "link:../..",
+    "rollup-plugin-san": "link:../",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "rollup-plugin-uglify": "^6.0.4",

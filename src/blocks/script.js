@@ -15,54 +15,55 @@
  * @return {string} import 代码
  */
 
-import qs from "qs";
+import createDebugger from "debug";
 
-export function generateScriptImport(descriptor, id, options) {
-  if (!descriptor.script || !descriptor.script.length) {
-    return "var script = {};";
+import { formatQuery } from "../utils/query";
+
+const debug = createDebugger("rollup-plugin-san:blocks/script.js");
+
+/**
+ *
+ * @param {*} descriptor
+ * @param {*} scopeId
+ * @param {*} options
+ * @returns
+ */
+export function generateScriptImport(descriptor, scopeId, options) {
+  debug("generateScriptImport", descriptor, scopeId, options);
+
+  let scriptImport = "var script = {};\n";
+
+  if (descriptor.script && descriptor.script.length) {
+    const script = descriptor.script[0];
+
+    const src = script.attribs.src || descriptor.filename;
+    const srcQuery = script.attribs.src ? `&src` : ``;
+    const attrsQuery = formatQuery(script.attribs, "js");
+    const query = `?san&type=script${srcQuery}${attrsQuery}`;
+
+    const resource = src + query;
+
+    scriptImport = options.esModule
+      ? `import script from '${resource}'
+        export * from '${resource}'`
+      : `var script = require('${resource}').default;
+        module.exports = require('${resource}');`;
   }
 
-  let script = descriptor.script[0];
-  let resource;
-
-  if (script.attribs.src) {
-    resource = script.attribs.src;
-  } else {
-    let resourcePath = id.replace(/\\/g, "/");
-    let query = Object.assign(
-      {
-        lang: "js",
-      },
-      script.attribs,
-      {
-        san: "",
-        type: "script",
-        // TODO
-        "": "fake.js",
-      }
-    );
-    resource = `${resourcePath}?${qs.stringify(query)}`;
-  }
-
-  return `
-        ${
-          options.esModule
-            ? `import script from '${resource}';`
-            : `var script = require('${resource}').default;`
-        }
-        ${
-          options.esModule
-            ? `export * from '${resource}';`
-            : `module.exports = require('${resource}');`
-        }
-    `;
+  return scriptImport;
 }
 
-export function getScriptCode(descriptor, options) {
+/**
+ *
+ * @param {*} descriptor
+ * @param {*} options
+ * @returns
+ */
+export function getScriptCode(descriptor, query, options) {
   const script = descriptor.script[0];
 
   return {
-    content: script.content,
+    code: script.content,
     map: {
       mappings: "",
     },

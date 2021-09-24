@@ -9,8 +9,6 @@
  */
 
 import fs from "fs";
-import hash from "hash-sum";
-import postcss from "postcss";
 import createDebugger from "debug";
 import { createFilter } from "rollup-pluginutils";
 
@@ -19,12 +17,9 @@ import { getTemplateCode } from "./blocks/template";
 import { getScriptCode } from "./blocks/script";
 import { getStyleCode } from "./blocks/style";
 
-import { addScopeID } from "./transformers/transformTemplate";
-
 import { setDescriptor, getDescriptor } from "./utils/descriptors";
 import { parseQuery } from "./utils/query";
 import defaultOptions from "./utils/options";
-import postcssPlugin from "./utils/scopedCSS";
 
 const debug = createDebugger("rollup-plugin-san");
 
@@ -34,9 +29,9 @@ const SAN_BLOCK_MAP = {
   script: getScriptCode,
 };
 
-function extract(descriptor, query, options, id) {
+function extract(descriptor, query, options) {
   let extractor = SAN_BLOCK_MAP[query.type];
-  return extractor(descriptor, options, query, id);
+  return extractor(descriptor, query, options);
 }
 
 // SanPlugin 插件
@@ -76,7 +71,6 @@ export default function SanPlugin(userOptions = {}) {
 
     async load(id) {
       const query = parseQuery(id);
-
       if (query.san) {
         // src 引入外部文件，不用这里处理
         if (query.src) {
@@ -85,14 +79,10 @@ export default function SanPlugin(userOptions = {}) {
         const descriptor = getDescriptor(query.filename);
 
         if (descriptor) {
-          const block = await extract(descriptor, query, options, id);
+          const block = await extract(descriptor, query, options);
 
           if (block) {
-            debug(`block code: (${block.content})`);
-            return {
-              code: block.content,
-              map: block.map,
-            };
+            return block;
           }
         }
       }
@@ -101,12 +91,13 @@ export default function SanPlugin(userOptions = {}) {
 
     async transform(code, id) {
       const query = parseQuery(id);
+      const descriptor = getDescriptor(query.filename);
 
       // 入口 san 文件
       if (!query.san && filter(id)) {
-        debug(`transform .san entry (${id})`);
+        debug(`从 ${id} 生成入口 import代码：`);
         // 生成入口 import
-        const output = generateEntryCode(code, id, options);
+        const output = generateEntryCode(code, query, options);
 
         if (output) {
           debug("入口 san 文件代码:", "\n" + output.code + "\n");
@@ -126,10 +117,7 @@ export default function SanPlugin(userOptions = {}) {
           debug(`transform template (${id}), with code\n${code}`);
 
           return {
-            code: `export default \`${addScopeID(
-              getDescriptor(query.filename).template[0].content,
-              query.filename
-            )}\``,
+            code,
             map: {
               mappings: "",
             },

@@ -21,7 +21,7 @@ const config = [
         esModule: true,
       }),
       PostCSS(),
-      uglify(),
+      // uglify(),
       copy({
         targets: [{ src: "./index.html", dest: "dist/" }],
       }),

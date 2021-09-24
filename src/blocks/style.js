@@ -5,14 +5,14 @@
  * See LICENSE file in the project root for license information.
  *
  * @file style.js
- * @author clark-t
+ * @description
  */
-import qs from "qs";
-import cssModules from "../utils/cssModules";
+import createDebugger from "debug";
 
-import postcss from "postcss";
-import postcssPlugin from "../utils/scopedCSS";
-import hash from "hash-sum";
+import { formatQuery } from "../utils/query";
+
+const debug = createDebugger("rollup-plugin-san:blocks/style.js");
+
 /**
  * 根据 san 文件代码块生成对应 style 部分的 import 代码
  *
@@ -20,73 +20,108 @@ import hash from "hash-sum";
  * @param {Object} options 参数
  * @return {string} import 代码
  */
-export function generateStyleImport(descriptor, id, options) {
-  if (!descriptor.style || !descriptor.style.length) {
-    return "var injectStyles = [];\n";
-  }
+export function generateStyleImport(descriptor, scopeId, options) {
+  debug("generateStyleImport", descriptor, scopeId, options);
 
-  // 允许多个 <style> 标签
-  let injectStyles = [];
-  let styles = descriptor.style;
-  let code = "";
+  let stylesImport = "var injectStyles = [];\n";
 
-  for (let i = 0; i < styles.length; i++) {
-    let style = styles[i];
-    let isCSSModule = style.attribs.module !== undefined;
-    let resourcePath;
-    let resourceQuery;
+  const styles = descriptor.style;
 
-    if (style.attribs.src) {
-      resourcePath = style.attribs.src;
-      resourceQuery = { ...style.attribs };
-      delete resourceQuery.src;
-    } else {
-      resourcePath = id.replace(/\\/g, "/");
-      resourceQuery = Object.assign(style.attribs, {
-        san: "",
-        type: "style",
-        index: i,
-      });
-    }
-    resourcePath = resourcePath.replace(/\\/g, "/");
-    let resource = `${resourcePath}?${qs.stringify(resourceQuery)}`;
-    if (isCSSModule) {
-      code += options.esModule
-        ? `import style${i} from '${resource}&lang=.js';\nimport '${resource}&lang=.css';\n`
-        : `var style${i} = require('${resource}&lang=.js');\nrequire('${resource}&lang=.css');\n`;
-      injectStyles.push(`style${i}`);
-    } else {
-      code += options.esModule
-        ? `import '${resource}&lang=.css';\n`
-        : `require('${resource}&lang=.css');\n`;
+  if (styles && styles.length) {
+    for (let i = 0; i < styles.length; i++) {
+      let style = styles[i];
+      let isCSSModule = style.attribs.module !== undefined;
+
+      const src = style.attribs.src || descriptor.filename;
+      const idQuery = `&id=${scopeId}`;
+      const srcQuery = style.attribs.src ? `&src` : ``;
+      const attrsQuery = formatQuery(style.attribs, "css");
+      const attrsQueryWithoutModule = attrsQuery.replace(
+        /&module(=true|=[^&]+)?/,
+        ""
+      );
+      const query = `?san&type=style&index=${i}${srcQuery}${idQuery}`;
+      const resource = src + query + attrsQuery;
+      const resourceWithoutModule = src + query + attrsQueryWithoutModule;
+
+      stylesImport += options.esModule
+        ? `import ${JSON.stringify(resource)};`
+        : `require('${JSON.stringify(resource)}');`;
     }
   }
-  code += `var injectStyles = [${injectStyles.join(", ")}];\n`;
-  return code;
+
+  return stylesImport
+
+  // // 允许多个 <style> 标签
+  // let injectStyles = [];
+  // let styles = descriptor.style;
+  // let code = "";
+
+  // for (let i = 0; i < styles.length; i++) {
+  //   let style = styles[i];
+  //   let isCSSModule = style.attribs.module !== undefined;
+  //   let resourcePath;
+  //   let resourceQuery;
+
+  //   if (style.attribs.src) {
+  //     resourcePath = style.attribs.src;
+  //     resourceQuery = { ...style.attribs };
+  //     delete resourceQuery.src;
+  //   } else {
+  //     resourcePath = id.replace(/\\/g, "/");
+  //     resourceQuery = Object.assign(style.attribs, {
+  //       san: "",
+  //       type: "style",
+  //       index: i,
+  //     });
+  //   }
+  //   resourcePath = resourcePath.replace(/\\/g, "/");
+  //   let resource = `${resourcePath}?${qs.stringify(resourceQuery)}`;
+  //   if (isCSSModule) {
+  //     code += options.esModule
+  //       ? `import style${i} from '${resource}&lang=.js';\nimport '${resource}&lang=.css';\n`
+  //       : `var style${i} = require('${resource}&lang=.js');\nrequire('${resource}&lang=.css');\n`;
+  //     injectStyles.push(`style${i}`);
+  //   } else {
+  //     code += options.esModule
+  //       ? `import '${resource}&lang=.css';\n`
+  //       : `require('${resource}&lang=.css');\n`;
+  //   }
+  // }
+  // code += `var injectStyles = [${injectStyles.join(", ")}];\n`;
+
+  // return stylesImport;
 }
 
-export async function getStyleCode(descriptor, options, query) {
+export async function getStyleCode(descriptor, query, options) {
   let code = `${options.esModule ? "export default" : "module.exports ="} `;
+
   const style = descriptor.style[query.index];
-
-  const scopedID = `data-s-${hash(query.filename)}`;
-
-  const postcssResult = await cssModules(style.content);
-  const scopedCSS = await postcss([postcssPlugin(scopedID)]).process(
-    style.content
-  ).css;
-
   return {
-    content:
-      query.module !== undefined
-        ? query.lang === ".js"
-          ? `${code}${JSON.stringify(postcssResult.cssMap)}`
-          : `${postcssResult.css}`
-        : query.scoped
-        ? `${scopedCSS}`
-        : `${style.content}`,
+    code: style.content,
     map: {
       mappings: "",
     },
   };
+
+  // const scopedID = `data-s-${hash(query.filename)}`;
+
+  // const postcssResult = await cssModules(style.content);
+  // const scopedCSS = await postcss([postcssPlugin(scopedID)]).process(
+  //   style.content
+  // ).css;
+
+  // return {
+  //   content:
+  //     query.module !== undefined
+  //       ? query.lang === ".js"
+  //         ? `${code}${JSON.stringify(postcssResult.cssMap)}`
+  //         : `${postcssResult.css}`
+  //       : query.scoped
+  //       ? `${scopedCSS}`
+  //       : `${style.content}`,
+  //   map: {
+  //     mappings: "",
+  //   },
+  // };
 }

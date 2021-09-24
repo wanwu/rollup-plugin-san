@@ -27,10 +27,10 @@ const config = [
       SanPlugin({
         esModule: true,
       }),
-      typescript({
-        // Absolute path to import correct config in e2e tests
-        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
-      }),
+      // typescript({
+      //   // Absolute path to import correct config in e2e tests
+      //   // tsconfig: path.resolve(__dirname, 'tsconfig.json'),
+      // }),
       PostCSS(),
       copy({
         targets: [{ src: "./index.html", dest: "dist/" }],

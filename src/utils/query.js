@@ -7,10 +7,21 @@
  * @file query.js
  * @description querystring 解析文件请求
  */
-import qs from "qs";
+import qs from "querystring";
+import createDebugger from "debug";
 
+const debug = createDebugger("rollup-plugin-san:uils/query.js");
+
+const ignoreList = ["id", "index", "src", "type", "lang"];
+
+/**
+ * 
+ * @param {*} id 
+ * @returns 
+ */
 export function parseQuery(id) {
-  // app.san?type=script&id=asdf78&compileTemplate=aNode
+  debug("parseQuery：", id);
+
   const [filename, query] = id.split("?", 2);
 
   if (!query) return { san: false, filename };
@@ -30,4 +41,34 @@ export function parseQuery(id) {
   }
 
   return { san: false, filename };
+}
+
+/**
+ * 
+ * @param {*} attrs 
+ * @param {*} langFallback 
+ * @param {*} forceLangFallback 
+ * @returns 
+ */
+export function formatQuery(attrs, langFallback, forceLangFallback = false) {
+  debug("formatQuery：", attrs, langFallback, forceLangFallback);
+
+  let query = ``;
+  for (const name in attrs) {
+    const value = attrs[name];
+    if (!ignoreList.includes(name)) {
+      query += `&${qs.escape(name)}${
+        value ? `=${qs.escape(String(value))}` : ``
+      }`;
+    }
+  }
+  if (langFallback || attrs.lang) {
+    query +=
+      `lang` in attrs
+        ? forceLangFallback
+          ? `&lang.${langFallback}`
+          : `&lang.${attrs.lang}`
+        : `&lang.${langFallback}`;
+  }
+  return query;
 }
