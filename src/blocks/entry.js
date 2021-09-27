@@ -36,6 +36,7 @@ export function getAST(source) {
     withEndIndices: true,
     lowerCaseAttributeNames: false,
   });
+
   return doc.children || [];
 }
 
@@ -46,8 +47,8 @@ export function getAST(source) {
  */
 export function generateDescriptor(source, query) {
   let ast = getAST(source);
-
   let descriptor = {};
+
   for (let node of ast) {
     if (
       ELEMENT_TYPES.indexOf(node.type) > -1 &&
@@ -62,6 +63,7 @@ export function generateDescriptor(source, query) {
       descriptor.filename = query.filename;
     }
   }
+
   return { descriptor, ast };
 }
 
@@ -81,9 +83,6 @@ export function generateEntryCode(source, query, options) {
   const { descriptor } = generateDescriptor(source, query);
   // 缓存以提高性能
   setDescriptor(filename, descriptor);
-
-  const hasScoped =
-    descriptor.style && descriptor.style.some((s) => s.attribs.scoped);
 
   const normalizePath = path.resolve("../src/runtime/index.js");
   const normalizeImport = `${

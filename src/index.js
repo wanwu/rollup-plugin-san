@@ -17,6 +17,9 @@ import { getTemplateCode } from "./blocks/template";
 import { getScriptCode } from "./blocks/script";
 import { getStyleCode } from "./blocks/style";
 
+import { addScopedIdInTemplate } from './transformers/transformTemplate';
+import { addScopedIdInCSS } from "./transformers/transformStyle";
+
 import { setDescriptor, getDescriptor } from "./utils/descriptors";
 import { parseQuery } from "./utils/query";
 import defaultOptions from "./utils/options";
@@ -115,19 +118,18 @@ export default function SanPlugin(userOptions = {}) {
         }
         if (query.type === "template") {
           debug(`transform template (${id}), with code\n${code}`);
-
+          const scopedTemplate = addScopedIdInTemplate(code, query.id);
           return {
-            code,
+            code: scopedTemplate,
             map: {
               mappings: "",
             },
           };
-          // return transformTemplate(code, id, options, query, this);
         } else if (query.type === "style") {
           debug(`transform style (${id}), with code\n${code}`);
-
+          const scopedCss = query.scoped ? addScopedIdInCSS(code, query.id) : code;
           return {
-            code,
+            code: scopedCss,
             map: {
               mappings: "",
             },

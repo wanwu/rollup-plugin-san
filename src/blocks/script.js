@@ -7,13 +7,6 @@
  * @file script.js
  * @description 根据 san 文件代码块生成对应 script 部分的 import 代码
  */
-/**
- * 根据 san 文件代码块生成对应 script 部分的 import 代码
- *
- * @param {Object} descriptor san 文件代码块描述对象
- * @param {Object} options 参数
- * @return {string} import 代码
- */
 
 import createDebugger from "debug";
 

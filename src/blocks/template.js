@@ -5,7 +5,7 @@
  * See LICENSE file in the project root for license information.
  *
  * @file template.js
- * @description 生成 template code 导入
+ * @description 根据 san 文件代码块生成对应 template 部分的 import 代码
  */
 import createDebugger from "debug";
 
@@ -50,7 +50,7 @@ export function generateTemplateImport(descriptor, scopeId, options) {
  * @param {*} options 
  * @returns 
  */
-export function getTemplateCode(descriptor, query, options) {
+export function getTemplateCode(descriptor, _, options) {
   const code = `${options.esModule ? "export default" : "module.exports ="}`;
   const template = descriptor.template[0];
 

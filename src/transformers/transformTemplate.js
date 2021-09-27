@@ -28,7 +28,7 @@ const compileTemplateTypes = ["aPack", "aNode", "none"];
  * @param {*} options
  * @returns
  */
-function compileTemplate(source, query, options) {
+export function compileTemplate(source, query, options) {
   let code = source;
 
   // 优先使用template上面的compileTemplate
@@ -70,12 +70,11 @@ function compileTemplate(source, query, options) {
  * @param {string} resourcePath 资源路径 for preparse
  * @return {string} 转换完的代码文本
  */
-function addScopeID(source, resourcePath) {
-  const id = hash(resourcePath);
-  let ast = getAST(source);
+export function addScopedIdInTemplate(source, scopedId) {
+  const ast = getAST(source);
 
   for (let node of ast) {
-    node.type === "tag" && addId(node, id);
+    node.type === "tag" && addId(node, scopedId);
   }
 
   return render(ast, {

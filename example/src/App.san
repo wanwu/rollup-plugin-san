@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="content">Hello {{name}}!</div>
-    <child name="san child"></child>
-    <h1 class="ok">css</h1>
+    <div class="content">Hello {{name}}! {{date}}</div>
+    <child name="san child with css modules"></child>
+    <span class="scoped-css">same class name css but not scoped</span>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ export default {
   initData() {
     return {
       name: "San.js",
+      date: new Date()
     };
   },
   components: {
@@ -20,3 +21,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.scoped-css {
+  color: red;
+}
+</style>

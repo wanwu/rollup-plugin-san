@@ -1,26 +1,30 @@
 <template>
-  <div class="{{$style.child}} ok">{{name}}</div>
+<div>
+    <div class="{{$style.child}}">{{name}}</div>
+    <span class="scoped-css">this is scoped css</span>
+</div>
 </template>
 
 <script>
 export default {
   initData() {
     return {
-      foo: 'hello'
-    }
+      foo: "hello",
+    };
   },
-}
+};
 </script>
 
 <style module>
 .child {
-  color: red;
+  font-size: 20px;
+  border: 1px solid #999;
 }
 </style>
 
 <style scoped>
-.ok {
-  font-size: 40px;
+.scoped-css {
+  color:aqua;
 }
 </style>
 

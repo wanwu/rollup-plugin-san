@@ -14,13 +14,14 @@ import createDebugger from "debug";
 import postcss from "postcss";
 import postcssModules from "postcss-modules";
 
-import postcssPlugin from "../utils/scopedCSS";
+import postcssPlugin from "../utils/postcssPlugin";
 
 const debug = createDebugger(
   "rollup-plugin-san:src/transformers/transformStyle.js"
 );
 
-export function cssModules(css, options) {
+export async function cssModules(css, options) {
+  debug("cssModules");
   let result;
   let cssMap = {};
 
@@ -31,8 +32,8 @@ export function cssModules(css, options) {
       },
     }),
   ]).process(css, { from: undefined });
-
   result = Object.assign(postcssResult, { cssMap });
+
   return result;
 }
 
@@ -43,8 +44,8 @@ export function cssModules(css, options) {
  * @param {string} resourcePath 资源路径 for preparse
  * @return {string} 转换完的代码文本
  */
-export async function addScopedId(source, scopedID) {
-  const { css } = await postcss([postcssPlugin(scopedID)]).process(source);
+export async function addScopedIdInCSS(source, scopeId) {
+  const { css } = await postcss([postcssPlugin(`data-s-${scopeId}`)]).process(source);
 
   return css;
 }

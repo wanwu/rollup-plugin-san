@@ -11,7 +11,6 @@
 /* eslint-disable prefer-rest-params */
 
 import { defineComponent } from "san";
-
 /**
  * 处理 .san 组件 script 与 template 等部分的组合方法
  *
@@ -66,6 +65,7 @@ function componentDefinitions(cmpt) {
       dfns.push(cmpt.prototype.constructor.prototype);
     }
   }
+
   return dfns;
 }
 
@@ -89,5 +89,6 @@ function objectAssign(target) {
       }
     }
   }
+
   return to;
 }
