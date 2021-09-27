@@ -17,7 +17,10 @@ import { getTemplateCode } from "./blocks/template";
 import { getScriptCode } from "./blocks/script";
 import { getStyleCode } from "./blocks/style";
 
-import { addScopedIdInTemplate } from './transformers/transformTemplate';
+import {
+  addScopedIdInTemplate,
+  compileTemplate,
+} from "./transformers/transformTemplate";
 import { addScopedIdInCSS } from "./transformers/transformStyle";
 
 import { setDescriptor, getDescriptor } from "./utils/descriptors";
@@ -118,16 +121,34 @@ export default function SanPlugin(userOptions = {}) {
         }
         if (query.type === "template") {
           debug(`transform template (${id}), with code\n${code}`);
-          const scopedTemplate = addScopedIdInTemplate(code, query.id);
+          
+          let output = code;
+
+          const compileTpl = query.compileTemplate || options.compileTemplate;
+          if (compileTpl && compileTpl !== "none") {
+            output = compileTemplate(
+              descriptor.template[0].content,
+              // 临时加上
+              Object.assign(query, { lang: "html" }),
+              options
+            );
+          } else {
+            output = addScopedIdInTemplate(code, query.id);
+          }
+
           return {
-            code: scopedTemplate,
+            code: output,
             map: {
               mappings: "",
             },
           };
         } else if (query.type === "style") {
           debug(`transform style (${id}), with code\n${code}`);
-          const scopedCss = query.scoped ? addScopedIdInCSS(code, query.id) : code;
+
+          const scopedCss = query.scoped
+            ? addScopedIdInCSS(code, query.id)
+            : code;
+
           return {
             code: scopedCss,
             map: {

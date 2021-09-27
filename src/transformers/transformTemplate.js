@@ -30,11 +30,10 @@ const compileTemplateTypes = ["aPack", "aNode", "none"];
  */
 export function compileTemplate(source, query, options) {
   let code = source;
-
   // 优先使用template上面的compileTemplate
   const compileTpl = query.compileTemplate || options.compileTemplate;
   if (compileTpl && compileTemplateTypes.includes(compileTpl)) {
-    if (query.lang !== "html") {
+    if (query.lang !== "html") { // rollup-plugin-san
       throw new Error(
         "attribute `compileTemplate` can only used when `lang` is `html`"
       );
@@ -46,12 +45,12 @@ export function compileTemplate(source, query, options) {
 
     switch (compileTpl) {
       case "aNode":
-        code = aNode;
+        code = JSON.stringify(aNode);
         break;
       case "aPack":
         if (aNode.children.length) {
           const aPack = aNodeUtils.pack(aNode.children[0]);
-          code = aPack;
+          code = JSON.stringify(aPack);
         }
         break;
       case "none":
@@ -60,15 +59,14 @@ export function compileTemplate(source, query, options) {
     }
   }
 
-  return code;
+  return `${options.esModule ? "export default" : "module.exports ="} ${code}`;
 }
 
 /**
  * 预处理template增加属性，读出设置scoped的style模块重写选择器
- *
- * @param {string} source .san代码文本
- * @param {string} resourcePath 资源路径 for preparse
- * @return {string} 转换完的代码文本
+ * @param {*} source 
+ * @param {*} scopedId 
+ * @returns 
  */
 export function addScopedIdInTemplate(source, scopedId) {
   const ast = getAST(source);

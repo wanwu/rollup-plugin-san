@@ -1,4 +1,4 @@
-<template>
+<template compileTemplate="aPack">
   <div>
     <div class="content">Hello {{name}}!</div>
     <child name="san child with css modules"></child>
@@ -13,7 +13,7 @@ export default {
   initData() {
     return {
       name: "San.js",
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString() as string
     };
   },
   components: {
