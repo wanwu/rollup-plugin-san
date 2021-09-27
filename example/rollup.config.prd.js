@@ -1,7 +1,9 @@
+import path from "path";
 import NodeResolve from "@rollup/plugin-node-resolve";
 import copy from "rollup-plugin-copy";
 import PostCSS from "rollup-plugin-postcss";
 import SanPlugin from "rollup-plugin-san";
+import typescript from "rollup-plugin-typescript2";
 import { uglify } from "rollup-plugin-uglify";
 
 const config = [
@@ -21,7 +23,10 @@ const config = [
         esModule: true,
       }),
       PostCSS(),
-      // uglify(),
+      typescript({
+        tsconfig: path.resolve(__dirname, "tsconfig.json"),
+      }),
+      uglify(),
       copy({
         targets: [{ src: "./index.html", dest: "dist/" }],
       }),

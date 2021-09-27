@@ -5,7 +5,7 @@
 </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   initData() {
     return {
@@ -28,8 +28,8 @@ export default {
 }
 </style>
 
-<style>
+<style lang="less">
 div {
-  margin: 10px;
+  margin: 10 + 2px;
 }
 </style>
