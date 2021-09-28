@@ -121,7 +121,7 @@ export default function SanPlugin(userOptions = {}) {
         }
         if (query.type === "template") {
           debug(`transform template (${id}), with code\n${code}`);
-          
+
           let output = code;
 
           const compileTpl = query.compileTemplate || options.compileTemplate;

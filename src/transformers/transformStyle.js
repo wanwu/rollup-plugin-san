@@ -45,7 +45,10 @@ export async function cssModules(css, options) {
  * @return {string} 转换完的代码文本
  */
 export async function addScopedIdInCSS(source, scopeId) {
-  const { css } = await postcss([postcssPlugin(`data-s-${scopeId}`)]).process(source);
+  const { css } = await postcss([postcssPlugin(`data-s-${scopeId}`)]).process(
+    source,
+    { from: undefined }
+  );
 
   return css;
 }

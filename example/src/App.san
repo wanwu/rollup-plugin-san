@@ -1,5 +1,6 @@
 <template compileTemplate="aPack">
   <div>
+    <img src="logo.svg" alt="logo" style="height: 300px;">
     <div class="content">Hello {{name}}!</div>
     <child name="san child with css modules"></child>
     <span class="scoped-css">same class name css but not scoped</span>
@@ -28,5 +29,9 @@ export default {
 <style>
 .scoped-css {
   color: red;
+}
+
+.box {
+  height: 200px;
 }
 </style>

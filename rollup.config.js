@@ -28,6 +28,7 @@ export default {
     "debug",
     "qs",
     "path",
+    "querystring",
     "@babel/runtime/helpers/readOnlyError",
     "@babel/runtime/helpers/asyncToGenerator",
     "@babel/runtime/helpers/defineProperty",
