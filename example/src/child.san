@@ -2,8 +2,8 @@
 <div>
     <div class="{{$style.child}}">{{name}}</div>
     <span class="scoped-css">this is scoped css</span>
-    <div style="background: blue">
-        <img src="{{baidu}}" alt="baidu" style="height: 50px">
+    <div style="background: blue;overflow:hidden">
+        <img src="{{baidu}}" alt="baidu" style="height: 30px;float:right;margin: 10px 0">
     </div>
 </div>
 </template>
@@ -17,9 +17,6 @@ export default {
       foo: "hello",
       baidu
     };
-  },
-  inited() {
-    console.log(baidu)
   }
 };
 </script>

@@ -1,9 +1,10 @@
 <template compileTemplate="aPack">
   <div>
-    <img src="logo.svg" alt="logo" style="height: 300px;">
+    <img src="logo.svg" alt="logo" class="logo">
     <div class="content">Hello {{name}}!</div>
-    <child name="san child with css modules"></child>
     <span class="scoped-css">same class name css but not scoped</span>
+
+    <child name="san child with css modules"></child>
   </div>
 </template>
 
@@ -22,6 +23,7 @@ export default {
   },
   inited() {
     console.log(this.data.get('date') as string);
+    // throw new Error('报错测试');
   }
 };
 </script>
@@ -31,7 +33,9 @@ export default {
   color: red;
 }
 
-.box {
-  height: 200px;
+.logo {
+  height: 300px;
+  display: block;
+  margin: 0 auto;
 }
 </style>

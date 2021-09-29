@@ -9,16 +9,17 @@
  */
 import createDebugger from "debug";
 
+import { getContent } from "../utils/content";
 import { formatQuery } from "../utils/query";
 
 const debug = createDebugger("rollup-plugin-san:blocks/template.js");
 
 /**
- * 
- * @param {*} descriptor 
- * @param {*} scopeId 
- * @param {*} options 
- * @returns 
+ *
+ * @param {*} descriptor
+ * @param {*} scopeId
+ * @param {*} options
+ * @returns
  */
 export function generateTemplateImport(descriptor, scopeId, options) {
   debug("generateTemplateImport", descriptor, scopeId, options);
@@ -45,19 +46,22 @@ export function generateTemplateImport(descriptor, scopeId, options) {
 }
 
 /**
- * 
- * @param {*} descriptor 
- * @param {*} options 
- * @returns 
+ *
+ * @param {*} descriptor
+ * @param {*} options
+ * @returns
  */
 export function getTemplateCode(descriptor, _, options) {
   const code = `${options.esModule ? "export default" : "module.exports ="}`;
   const template = descriptor.template[0];
 
+  const { map } = getContent(descriptor.source, template, {
+    resourcePath: descriptor.filename,
+    ast: descriptor.ast,
+  });
+
   return {
     code: `${code} \`${template.content}\``,
-    map: {
-      mappings: "",
-    },
+    map,
   };
 }

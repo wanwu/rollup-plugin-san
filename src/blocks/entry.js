@@ -46,8 +46,8 @@ export function getAST(source) {
  * @returns
  */
 export function generateDescriptor(source, query) {
-  let ast = getAST(source);
-  let descriptor = {};
+  const ast = getAST(source);
+  const descriptor = {};
 
   for (let node of ast) {
     if (
@@ -56,15 +56,19 @@ export function generateDescriptor(source, query) {
     ) {
       const { startIndex, endIndex } = getContentRange(node, source);
       node.content = source.slice(startIndex, endIndex + 1);
+
       if (!descriptor[node.name]) {
         descriptor[node.name] = [];
       }
       descriptor[node.name].push(node);
-      descriptor.filename = query.filename;
     }
   }
 
-  return { descriptor, ast };
+  descriptor.filename = query.filename;
+  descriptor.source = source;
+  descriptor.ast = ast;
+
+  return descriptor;
 }
 
 /**
@@ -80,7 +84,7 @@ export function generateEntryCode(source, query, options) {
   const filename = query.filename;
   const scopeId = hash(filename);
 
-  const { descriptor } = generateDescriptor(source, query);
+  const descriptor = generateDescriptor(source, query);
   // 缓存以提高性能
   setDescriptor(filename, descriptor);
 

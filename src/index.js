@@ -95,7 +95,7 @@ export default function SanPlugin(userOptions = {}) {
       return null;
     },
 
-    async transform(code, id) {
+    async transform(source, id) {
       const query = parseQuery(id);
       const descriptor = getDescriptor(query.filename);
 
@@ -103,7 +103,7 @@ export default function SanPlugin(userOptions = {}) {
       if (!query.san && filter(id)) {
         debug(`从 ${id} 生成入口 import代码：`);
         // 生成入口 import
-        const output = generateEntryCode(code, query, options);
+        const output = generateEntryCode(source, query, options);
 
         if (output) {
           debug("入口 san 文件代码:", "\n" + output.code + "\n");
@@ -120,41 +120,44 @@ export default function SanPlugin(userOptions = {}) {
           this.addWatchFile(query.filename);
         }
         if (query.type === "template") {
-          debug(`transform template (${id}), with code\n${code}`);
+          debug(`transform template (${id}), with code\n${source}`);
 
-          let output = code;
+          const output = {
+            code: source,
+            map: {
+              mappings: "",
+            },
+          };
 
           const compileTpl = query.compileTemplate || options.compileTemplate;
           if (compileTpl && compileTpl !== "none") {
-            output = compileTemplate(
+            output.code = compileTemplate(
               descriptor.template[0].content,
               // 临时加上
               Object.assign(query, { lang: "html" }),
               options
             );
           } else {
-            output = addScopedIdInTemplate(code, query.id);
+            // all
+            output.code = addScopedIdInTemplate(source, query.id);
           }
 
-          return {
-            code: output,
-            map: {
-              mappings: "",
-            },
-          };
+          return output;
         } else if (query.type === "style") {
-          debug(`transform style (${id}), with code\n${code}`);
+          debug(`transform style (${id}), with code\n${source}`);
 
-          const scopedCss = query.scoped
-            ? addScopedIdInCSS(code, query.id)
-            : code;
-
-          return {
-            code: scopedCss,
+          const output = {
+            code: source,
             map: {
               mappings: "",
             },
           };
+          
+          output.code = query.scoped
+            ? await addScopedIdInCSS(source, query.id)
+            : source;
+
+          return output;
         }
       }
       return null;

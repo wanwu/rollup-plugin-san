@@ -21,9 +21,9 @@ const config = [
       file: "dist/index.js",
       format: "iife",
       sourcemap: "none",
-      // globals: {
-      //   san: "san",
-      // },
+      globals: {
+        san: "san",
+      },
     },
     plugins: [
       NodeResolve(),
@@ -64,7 +64,7 @@ const config = [
         logLevel: "silent",
       }),
     ],
-    // external: ["san"],
+    external: ["san"],
   },
 ];
 

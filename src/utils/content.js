@@ -9,7 +9,7 @@
  */
 
 import path from "path";
-import MagicString  from "magic-string";
+import MagicString from "magic-string";
 
 import debug from "debug";
 /**
@@ -60,8 +60,14 @@ function stringManager(code, ast) {
   return s;
 }
 
+/**
+ * 
+ * @param {*} node 
+ * @param {*} source 
+ * @returns 
+ */
 export function getContentRange(node, source) {
-  debug('getContentRange: ', source);
+  debug("getContentRange: ", source);
 
   let { startIndex, endIndex } = node;
 
@@ -78,4 +84,52 @@ export function getContentRange(node, source) {
   endIndex--;
 
   return { startIndex, endIndex };
+}
+
+/**
+ * 将内容块从文档中截取出来
+ *
+ * @param {string} source 源文件
+ * @param {Object} node 要截取的内容块所在节点
+ * @param {boolean=} needMap 是否需要生成 sourcemap，默认为 false
+ * @param {Object=} ast 源文件对应的 HTML AST
+ * @param {string=} resourcePath 源文件的文件路径
+ * @param {string=} prefix 截取后的代码块前缀，默认为空
+ * @param {string=} suffix 截取后的代码块后缀，默认为空
+ * @return {Object} 内容 {code, map}
+ */
+export function getContent(
+  source,
+  node,
+  { needMap = true, ast, resourcePath, prefix = "", suffix = "" }
+) {
+  let { startIndex, endIndex } = getContentRange(node, source);
+  if (!needMap) {
+    return {
+      code: prefix + source.slice(startIndex, endIndex + 1) + suffix,
+    };
+  }
+
+  let s = stringManager(source, ast);
+  s.remove(0, startIndex);
+  s.remove(endIndex + 1, source.length);
+
+  if (prefix) {
+    s.prepend(prefix);
+  }
+
+  if (suffix) {
+    s.append(suffix);
+  }
+
+  let map = s.generateMap({
+    file: path.basename(resourcePath),
+    source: resourcePath,
+    includeContent: true,
+  });
+
+  return {
+    code: s.toString(),
+    map: JSON.parse(map.toString()),
+  };
 }

@@ -22,17 +22,16 @@ const debug = createDebugger(
 
 export async function cssModules(css, options) {
   debug("cssModules");
-  let result;
-  let cssMap = {};
 
+  let cssHash;
   let postcssResult = await postcss([
     postcssModules({
       getJSON: function (_, json) {
-        cssMap = json;
+        cssHash = json;
       },
     }),
   ]).process(css, { from: undefined });
-  result = Object.assign(postcssResult, { cssMap });
+  const result = Object.assign(postcssResult, { cssHash });
 
   return result;
 }

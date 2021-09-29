@@ -9,6 +9,7 @@
  */
 import createDebugger from "debug";
 
+import { getContent } from "../utils/content";
 import { formatQuery } from "../utils/query";
 import { cssModules } from "../transformers/transformStyle";
 
@@ -16,10 +17,10 @@ const debug = createDebugger("rollup-plugin-san:blocks/style.js");
 
 /**
  * 根据 san 文件代码块生成对应 style 部分的 import 代码
- * @param {*} descriptor 
- * @param {*} scopeId 
- * @param {*} options 
- * @returns 
+ * @param {*} descriptor
+ * @param {*} scopeId
+ * @param {*} options
+ * @returns
  */
 export function generateStyleImport(descriptor, scopeId, options) {
   debug("generateStyleImport", descriptor, scopeId, options);
@@ -65,17 +66,20 @@ export async function getStyleCode(descriptor, query, options) {
   const code = `${options.esModule ? "export default " : "module.exports = "}`;
 
   const style = descriptor.style[query.index];
-  const { css, cssMap } = await cssModules(style.content, options);
+  const { css, cssHash } = await cssModules(style.content, options);
+
+  const { map } = getContent(descriptor.source, style, {
+    resourcePath: descriptor.filename,
+    ast: descriptor.ast,
+  });
 
   return {
     code:
       query.module !== undefined
         ? query["lang.css.js"] !== undefined
-          ? code + JSON.stringify(cssMap)
+          ? code + JSON.stringify(cssHash)
           : css
         : style.content,
-    map: {
-      mappings: "",
-    },
+    map,
   };
 }

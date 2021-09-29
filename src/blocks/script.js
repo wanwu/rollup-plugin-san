@@ -10,6 +10,7 @@
 
 import createDebugger from "debug";
 
+import { getContent } from "../utils/content";
 import { formatQuery } from "../utils/query";
 
 const debug = createDebugger("rollup-plugin-san:blocks/script.js");
@@ -52,13 +53,16 @@ export function generateScriptImport(descriptor, scopeId, options) {
  * @param {*} options
  * @returns
  */
-export function getScriptCode(descriptor, query, options) {
+export function getScriptCode(descriptor) {
   const script = descriptor.script[0];
+
+  const { map } = getContent(descriptor.source, script, {
+    resourcePath: descriptor.filename,
+    ast: descriptor.ast,
+  });
 
   return {
     code: script.content,
-    map: {
-      mappings: "",
-    },
+    map,
   };
 }
