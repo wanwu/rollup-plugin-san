@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import child from './child.san'
 
 export default {
@@ -23,6 +24,9 @@ export default {
   },
   inited() {
     console.log(this.data.get('date') as string);
+    axios.get('http://baidu.com').then(res => {
+      console.log(res);
+    })
     // throw new Error('报错测试');
   }
 };

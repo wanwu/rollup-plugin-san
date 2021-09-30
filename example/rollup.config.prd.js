@@ -18,11 +18,12 @@ const config = [
       sourcemap: "none",
       globals: {
         san: "san",
+        axios: "axios",
       },
     },
     plugins: [
       NodeResolve(),
-      // commonjs(),
+      commonjs(),
       SanPlugin({
         esModule: true,
       }),
@@ -46,7 +47,7 @@ const config = [
         ],
       }),
     ],
-    external: ["san"],
+    external: ["san", "axios"],
   },
 ];
 

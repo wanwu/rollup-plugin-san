@@ -45,7 +45,7 @@ export function getAST(source) {
  * @param {*} source
  * @returns
  */
-export function generateDescriptor(source, query) {
+export function generateDescriptor(source, filename) {
   const ast = getAST(source);
   const descriptor = {};
 
@@ -64,7 +64,7 @@ export function generateDescriptor(source, query) {
     }
   }
 
-  descriptor.filename = query.filename;
+  descriptor.filename = filename;
   descriptor.source = source;
   descriptor.ast = ast;
 
@@ -84,7 +84,7 @@ export function generateEntryCode(source, query, options) {
   const filename = query.filename;
   const scopeId = hash(filename);
 
-  const descriptor = generateDescriptor(source, query);
+  const descriptor = generateDescriptor(source, query.filename);
   // 缓存以提高性能
   setDescriptor(filename, descriptor);
 
