@@ -7,8 +7,6 @@
  * @file entry.js
  * @description 生成导入语句
  */
-import path from "path";
-
 import hash from "hash-sum";
 import createDebugger from "debug";
 import { parseDocument } from "htmlparser2";
@@ -88,7 +86,7 @@ export function generateEntryCode(source, query, options) {
   // 缓存以提高性能
   setDescriptor(filename, descriptor);
 
-  const normalizePath = path.join(__dirname, "../src/runtime/index.js");
+  const normalizePath = 'rollup-plugin-san/dist/runtime.js';
   const normalizeImport = `${
     options.esModule
       ? `import normalize from '${normalizePath}';`

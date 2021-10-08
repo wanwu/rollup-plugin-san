@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-san",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A rollup plugin supports `.san` file.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -9,6 +9,7 @@
     "dev": "rollup -c -w",
     "build": "rollup -c",
     "prebuild": "rm -rf dist/*",
+    "postbuild": "cp src/runtime/index.js dist/runtime.js",
     "example": "cd example/ && npm run dev",
     "test": "jest",
     "prepublishOnly": "npm run build"
