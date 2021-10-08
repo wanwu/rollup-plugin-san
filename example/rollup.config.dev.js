@@ -23,6 +23,7 @@ const config = [
       sourcemap: "none",
       globals: {
         san: "san",
+        axios: "axios",
       },
     },
     plugins: [
@@ -64,7 +65,7 @@ const config = [
         logLevel: "silent",
       }),
     ],
-    external: ["san"],
+    external: ["san", "axios"],
   },
 ];
 
