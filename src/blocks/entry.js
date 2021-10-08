@@ -88,7 +88,7 @@ export function generateEntryCode(source, query, options) {
   // 缓存以提高性能
   setDescriptor(filename, descriptor);
 
-  const normalizePath = path.resolve("../src/runtime/index.js");
+  const normalizePath = path.join(__dirname, "../src/runtime/index.js");
   const normalizeImport = `${
     options.esModule
       ? `import normalize from '${normalizePath}';`
