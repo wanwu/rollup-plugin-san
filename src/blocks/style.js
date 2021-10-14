@@ -11,7 +11,7 @@ import createDebugger from "debug";
 
 import { getContent } from "../utils/content";
 import { formatQuery } from "../utils/query";
-import { cssModules } from "../transformers/transformStyle";
+import { cssModules, preProcessLess } from "../transformers/transformStyle";
 
 const debug = createDebugger("rollup-plugin-san:blocks/style.js");
 
@@ -66,7 +66,10 @@ export async function getStyleCode(descriptor, query, options) {
   const code = `${options.esModule ? "export default " : "module.exports = "}`;
 
   const style = descriptor.style[query.index];
-  const { css, cssHash } = await cssModules(style.content, options);
+
+  const styleContent = await preProcessLess(style.content);
+
+  const { css, cssHash } = await cssModules(styleContent, options);
 
   const { map } = getContent(descriptor.source, style, {
     resourcePath: descriptor.filename,
@@ -76,7 +79,8 @@ export async function getStyleCode(descriptor, query, options) {
   return {
     code:
       query.module !== undefined
-        ? query["lang.css.js"] !== undefined
+        ? query["lang.css.js"] !== undefined ||
+          query["lang.less.js"] !== undefined
           ? code + JSON.stringify(cssHash)
           : css
         : style.content,

@@ -146,18 +146,18 @@ export default function SanPlugin(userOptions = {}) {
         } else if (query.type === "style") {
           debug(`transform style (${id}), with code\n${source}`);
 
-          const output = {
-            code: source,
+          let code = source;
+          
+          if (query.scoped) {
+            code = await addScopedIdInCSS(code, query.id)
+          }
+
+          return {
+            code,
             map: {
               mappings: "",
             },
           };
-          
-          output.code = query.scoped
-            ? await addScopedIdInCSS(source, query.id)
-            : source;
-
-          return output;
         }
       }
       return null;

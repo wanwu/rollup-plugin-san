@@ -11,6 +11,7 @@
 // 在这里处理所有样式代码，降低耦合性
 
 import createDebugger from "debug";
+import less from "less";
 import postcss from "postcss";
 import postcssModules from "postcss-modules";
 
@@ -19,6 +20,19 @@ import postcssPlugin from "../utils/postcssPlugin";
 const debug = createDebugger(
   "rollup-plugin-san:src/transformers/transformStyle.js"
 );
+
+export async function preProcessLess(css) {
+  // 处理如同时使用 less 及 css modules 的情况
+  debug("在最前面预处理 less");
+
+  let result = css;
+  less.render(css, function (e, output) {
+    if (e) throw new Error(e);
+    else result = output.css;
+  });
+
+  return result;
+}
 
 export async function cssModules(css, options) {
   debug("cssModules");
