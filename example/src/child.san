@@ -21,9 +21,9 @@ export default {
 };
 </script>
 
-<style module>
+<style lang="less" module>
 .child {
-  font-size: 20px;
+  font-size: 20 + 1px;
   border: 1px solid #999;
 }
 </style>
