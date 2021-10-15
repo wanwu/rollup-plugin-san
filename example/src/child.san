@@ -1,7 +1,7 @@
 <template>
 <div>
     <div class="{{$style.child}}">{{name}}</div>
-    <span class="scoped-css">this is scoped css</span>
+    <span class="scoped-css">{{ foo }} this is scoped css</span>
     <div style="background: blue;overflow:hidden">
         <img src="{{baidu}}" alt="baidu" style="height: 30px;float:right;margin: 10px 0">
     </div>
@@ -9,9 +9,10 @@
 </template>
 
 <script>
+import { Component } from 'san';
 import baidu from './baidu.png';
 
-export default {
+export default class Child extends Component{
   initData() {
     return {
       foo: "hello",

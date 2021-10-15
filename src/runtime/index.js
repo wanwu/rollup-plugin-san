@@ -47,9 +47,13 @@ function injectStylesIntoInitData(proto, injectStyles) {
   var original = proto.initData;
   proto.initData = original
     ? function () {
-        return objectAssign({}, original.call(this), { $style: style });
+      return objectAssign({}, original.call(this), { $style: style });
+    }
+    : proto.prototype.initData
+      ? function () {
+        return objectAssign({}, proto.prototype.initData.call(this), { $style: style });
       }
-    : function () {
+      : function () {
         return { $style: style };
       };
 }
