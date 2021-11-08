@@ -1,11 +1,5 @@
 # rollup-plugin-san
 
-<p align="center">
-    <a href="https://baidu.github.io/san/">
-        <img src="https://baidu.github.io/san/img/logo-colorful.svg" alt="Logo" height="220">
-    </a>
-</p>
-
 `rollup-plugin-san` 是一个支持 `.san` 单文件组件的 rollup 插件。
 
 类似 webpack 的
@@ -34,30 +28,30 @@ npm i rollup-plugin-san --save-dev
 然后编写 `rollup.config.js`：
 
 ```js
-import SanPlugin from 'rollup-plugin-san'
+import PluginSan from 'rollup-plugin-san';
 
 export default [
   {
-    input: 'src/main.js',
+    input: 'src/App.san',
     output: {
-      file: 'dist/index.js',
+      file: 'dist/app.js',
       format: 'esm',
       sourcemap: 'none',
     },
-    plugins: [SanPlugin()],
+    plugins: [PluginSan()],
     external: ['san'],
   },
-]
+];
 ```
 
-example 里包含了绝大多数的开发场景，比如热更新、压缩混淆、图片引入、ts 支持、copy 文件等等。
+examples 里包含了绝大多数的开发场景的示例，比如热更新、压缩混淆、图片引入、ts 支持、copy 文件等等。
 
 ## 插件设置
 
-|       Name        |            Type            | Default  | Description                                                               |
-| :---------------: | :------------------------: | :------: | :------------------------------------------------------------------------ |
-| `compileTemplate` | <code>{'none'&#124;'aPack'&#124;'aNode'}</code> | `'none'` | 将组件的`template` 编译成`aPack`、`aNode`，**默认不编译**，[详细说明](https://github.com/ecomfe/san-loader#%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB) |
-| `esModule` | `{Boolean}` | `false` | 使用 ESM 语法 |
+|       Name        |                      Type                       | Default  | Description                                                                                                                                      |
+| :---------------: | :---------------------------------------------: | :------: | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compileTemplate` | `{'none'&#124;'aPack'&#124;'aNode'}` | `'none'` | 将组件的`template` 编译成`aPack`、`aNode`，**默认不编译**，[详细说明](https://github.com/ecomfe/san-loader#%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB) |
+|    `esModule`     |                   `{Boolean}`                   | `false`  | 使用 ESM 语法                                                                                                                                    |
 
 ## 注意事项
 

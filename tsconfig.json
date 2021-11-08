@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": false,
+    "target": "es2015",
+    "module": "UMD",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "declaration": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "removeComments": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "lib": ["es6", "es7"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "test"]
+}

@@ -1,0 +1,15 @@
+<template>
+  <div class="hello">
+    hello {{ name }}
+  </div>
+</template>
+
+<script>
+export default {
+  initData() {
+    return {
+      name: 'San.js',
+    };
+  },
+};
+</script>

@@ -6,4 +6,3 @@ node_modules
 .vscode
 rollup.config.js
 yarn.lock
-dist/

@@ -1,0 +1,14 @@
+{
+  "name": "css-modules",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^8.0.0",
+    "rollup": "^2.10.9",
+    "rollup-plugin-postcss": "^2.0.4",
+    "rollup-plugin-san": "link:../.."
+  },
+  "scripts": {
+    "build": "rollup -c"
+  }
+}

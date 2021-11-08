@@ -1,0 +1,22 @@
+<template>
+  <div>
+    Hello {{ name }}
+    <child date="{{date}}"></child>
+  </div>
+</template>
+
+<script lang="ts">
+import Child from './Child.san';
+
+export default {
+  initData(): Record<string, any> {
+    return {
+      name: 'San.js',
+      date: new Date().toLocaleDateString() as string
+    };
+  },
+  components: {
+    child: Child
+  }
+};
+</script>

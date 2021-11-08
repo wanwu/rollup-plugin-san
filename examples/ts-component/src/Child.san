@@ -1,0 +1,15 @@
+<template>
+  <div>
+    im {{ name }}, date: {{ date }}
+  </div>
+</template>
+
+<script lang="ts">
+export default {
+  initData(): Record<string, any> {
+    return {
+      name: 'child'
+    };
+  },
+};
+</script>

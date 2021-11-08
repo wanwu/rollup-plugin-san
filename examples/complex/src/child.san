@@ -1,0 +1,42 @@
+<template>
+<div>
+    <div class="{{$style.child}}">{{name}}</div>
+    <span class="scoped-css">{{ foo }} this is scoped css</span>
+    <div style="background: blue;overflow:hidden">
+        <img src="{{baidu}}" alt="baidu" style="height: 30px;float:right;margin: 10px 0">
+    </div>
+</div>
+</template>
+
+<script>
+import { Component } from 'san';
+import baidu from './baidu.png';
+
+export default {
+  initData() {
+    return {
+      foo: "hello",
+      baidu
+    };
+  }
+};
+</script>
+
+<style lang="less" module>
+.child {
+  font-size: 20 + 1px;
+  border: 1px solid #999;
+}
+</style>
+
+<style scoped>
+.scoped-css {
+  color:green;
+}
+</style>
+
+<style lang="less">
+div {
+  margin: 10 + 2px 0;
+}
+</style>

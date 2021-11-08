@@ -1,0 +1,12 @@
+{
+  "name": "simple",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "rollup": "^2.59.0",
+    "rollup-plugin-san": "link:../.."
+  }
+}
