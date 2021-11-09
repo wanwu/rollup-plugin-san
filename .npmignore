@@ -1,8 +1,9 @@
-example/
+examples
 src
 test
 .DS_Store
 node_modules
 .vscode
-rollup.config.js
-yarn.lock
+coverage
+.github
+.editorconfig
