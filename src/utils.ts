@@ -70,11 +70,11 @@ export interface RawSourceMap extends StartOfSourceMap {
 }
 
 export function normalizeSourceMap(map: RawSourceMap, request: string): any {
-  return null as any;
   if (!map) return null as any;
 
   if (!request.includes('type=script')) {
     map.file = request;
+    map.sources = map.sources || [];
     map.sources[0] = request;
   }
 
