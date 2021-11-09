@@ -102,10 +102,6 @@ dist
 
 yarn-error.log
 
-# no need lock file
-yarn.lock
-package-lock.json
-
 .vscode/
 
 **/**/.DS_Store
