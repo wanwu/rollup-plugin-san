@@ -12,11 +12,11 @@ export default {
   initData(): Record<string, any> {
     return {
       name: 'San.js',
-      date: new Date().toLocaleDateString() as string
+      date: new Date().toLocaleDateString() as string,
     };
   },
   components: {
-    child: Child
-  }
+    child: Child,
+  },
 };
 </script>

@@ -1,17 +1,24 @@
-import path from 'path'
+import path from 'path';
 
-import PluginSan from 'rollup-plugin-san'
-import typescript from 'rollup-plugin-typescript2'
+import PluginSan from 'rollup-plugin-san';
+import typescript from 'rollup-plugin-typescript2';
 
 export default [
   {
     input: 'src/index.ts',
-    output: {
-      name: 'sanApp',
-      file: 'dist/app.js',
-      format: 'iife',
-      sourcemap: 'inline',
-    },
+    output: [
+      {
+        file: 'dist/app.esm.js',
+        format: 'esm',
+        sourcemap: 'none',
+      },
+      {
+        file: 'dist/app.global.js',
+        format: 'iife',
+        sourcemap: 'inline',
+        name: 'sanApp',
+      },
+    ],
     plugins: [
       PluginSan(),
       typescript({
@@ -20,4 +27,4 @@ export default [
     ],
     external: ['san'],
   },
-]
+];
