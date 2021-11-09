@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
+    "postinstall": "yarn --cwd examples",
     "clean": "rm -rf dist/",
     "dev": "npm run clean && tsc -w",
     "build": "npm run lint && npm run clean && tsc",
