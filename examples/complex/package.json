@@ -16,15 +16,12 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-postcss": "^4.0.1",
     "rollup-plugin-san": "link:../../",
-    "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "rollup-plugin-uglify": "^6.0.4",
     "typescript": "^3.9.3"
   },
   "scripts": {
-    "dev": "npm run clean && DEBUG=* rollup --config rollup.config.dev.js -w",
-    "build:dev": "npm run clean && DEBUG=* rollup --config rollup.config.prd.js",
-    "build": "npm run clean && rollup --config rollup.config.prd.js",
-    "clean": "rm -rf dist/"
+    "dev": "npm run clean && DEBUG=* rollup -c",
+    "clean": "rm -rf dist"
   }
 }

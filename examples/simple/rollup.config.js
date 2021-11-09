@@ -1,5 +1,4 @@
-// import PluginSan from 'rollup-plugin-san'
-import PluginSan from '../../'
+import PluginSan from 'rollup-plugin-san'
 
 export default [
   {

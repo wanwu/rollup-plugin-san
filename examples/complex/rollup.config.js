@@ -1,14 +1,20 @@
-import commonjs from "@rollup/plugin-commonjs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
 import image from "@rollup/plugin-image";
 import NodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
-import path from "path";
+
 import copy from "rollup-plugin-copy";
 import PostCSS from "rollup-plugin-postcss";
 import SanPlugin from "rollup-plugin-san";
 import typescript from "rollup-plugin-typescript2";
-import { uglify } from "rollup-plugin-uglify";
-import { babel } from '@rollup/plugin-babel';
+import browsersync from "rollup-plugin-browsersync";
+
+const filename = fileURLToPath(import.meta.url);
+const getPath = (file) => path.resolve(path.dirname(filename), file);
 
 const config = [
   {
@@ -20,14 +26,17 @@ const config = [
       name: "sanApp"
     },
     plugins: [
-      // commonjs(),
       SanPlugin({
+        templateCompileOptions: {
+          compileANode: 'aPack'
+        },
         styleCompileOptions: {
           preprocessLang: 'less'
         }
       }),
       NodeResolve(),
       image(),
+      commonjs(),
       PostCSS(),
       typescript({
         tsconfig: path.resolve(__dirname, "tsconfig.json"),
@@ -50,8 +59,7 @@ const config = [
                   "ios >= 9"
                 ]
               },
-              useBuiltIns: "usage",
-              corejs: 3
+              useBuiltIns: "usage"
             }
           ]
         ],
@@ -61,7 +69,6 @@ const config = [
           ]
         ]
       }),
-      // uglify(),
       replace({
         preventAssignment: true,
         "process.env.NODE_ENV": JSON.stringify("production"),
@@ -75,6 +82,12 @@ const config = [
           },
         ],
       }),
+      browsersync({
+        watch: true,
+        server: getPath("./dist"),
+        files: getPath("./dist"),
+        logLevel: "silent",
+      })
     ],
     external: ["san", "axios"],
   },
