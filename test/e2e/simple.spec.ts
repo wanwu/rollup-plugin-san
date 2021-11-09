@@ -8,9 +8,13 @@ describe('simple', () => {
     result = await roll('simple');
   });
 
-  it('should compile <template>', () => {
+  it('🌟 should compile <template>', () => {
     expect(result.output[0].code).toEqual(
       expect.stringContaining('var script = ')
+    );
+
+    expect(result.output[0].code).toEqual(
+      expect.stringContaining(`name: 'San.js',`)
     );
   });
 });
