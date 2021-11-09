@@ -35,11 +35,11 @@
   "license": "MIT",
   "dependencies": {
     "hash-sum": "^2.0.0",
-    "san-sfc-compiler": "^0.1.5",
     "qs": "^6.10.1",
     "rollup": "^2.59.0",
     "rollup-pluginutils": "^2.8.2",
-    "san": "^3.10.10"
+    "san": "^3.10.10",
+    "san-sfc-compiler": "^0.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
@@ -57,6 +57,10 @@
     "prettier": "^2.4.1",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
+  },
+  "resolutions": {
+    "nth-check": "^2.0.1",
+    "serialize-javascript": "^3.1.0"
   },
   "prettier": {
     "singleQuote": true,
