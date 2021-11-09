@@ -21,7 +21,8 @@
     "typescript": "^3.9.3"
   },
   "scripts": {
-    "dev": "npm run clean && DEBUG=* rollup -c",
+    "dev": "npm run clean && DEBUG=* ENV=dev rollup -c",
+    "build": "npm run clean && DEBUG=* ENV=prd rollup -c",
     "clean": "rm -rf dist"
   }
 }

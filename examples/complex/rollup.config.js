@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { babel } from '@rollup/plugin-babel';
+// import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import image from "@rollup/plugin-image";
 import NodeResolve from "@rollup/plugin-node-resolve";
@@ -16,6 +16,8 @@ import browsersync from "rollup-plugin-browsersync";
 const filename = fileURLToPath(import.meta.url);
 const getPath = (file) => path.resolve(path.dirname(filename), file);
 
+const dev = process.env.ENV === 'dev';
+
 const config = [
   {
     input: "src/main.js",
@@ -23,6 +25,10 @@ const config = [
       file: "dist/app.js",
       format: "iife",
       sourcemap: "none",
+      globals: {
+        "san": "san",
+        "axios": "axios",
+      },
       name: "sanApp"
     },
     plugins: [
@@ -41,34 +47,6 @@ const config = [
       typescript({
         tsconfig: path.resolve(__dirname, "tsconfig.json"),
       }),
-      babel({
-        presets: [
-          [
-            "@babel/preset-env",
-            {
-              targets: {
-                browsers: [
-                  "last 2 versions",
-                  "safari >= 7",
-                  "ie >= 11",
-                  "edge >= 15",
-                  "firefox >= 45",
-                  "chrome >= 49",
-                  "opera >= 43",
-                  "android >= 4.4",
-                  "ios >= 9"
-                ]
-              },
-              useBuiltIns: "usage"
-            }
-          ]
-        ],
-        plugins: [
-          [
-            "@babel/plugin-proposal-class-properties"
-          ]
-        ]
-      }),
       replace({
         preventAssignment: true,
         "process.env.NODE_ENV": JSON.stringify("production"),
@@ -82,7 +60,7 @@ const config = [
           },
         ],
       }),
-      browsersync({
+      dev && browsersync({
         watch: true,
         server: getPath("./dist"),
         files: getPath("./dist"),
