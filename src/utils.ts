@@ -8,6 +8,7 @@ export type Query = Partial<
     san?: false;
     index?: number;
     id?: string;
+    compileANode?: string | undefined;
   }
 >;
 

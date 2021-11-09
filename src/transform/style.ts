@@ -12,8 +12,9 @@ export default (
     source: code,
     filename: query.filename!,
     id: `data-s-${query.id}`,
-    scoped: !!query.scoped,
+    scoped: !!query.scoped as any,
     modules: !!query.module as any,
+    preprocessLang: query.lang,
     ...options.styleCompileOptions,
   });
 

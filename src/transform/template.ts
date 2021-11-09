@@ -14,6 +14,7 @@ export default (
     filename: query.filename!,
     id: `data-s-${query.id}`,
     scoped,
+    compileANode: query.compileANode as any,
     ...options.templateCompileOptions,
   });
 
