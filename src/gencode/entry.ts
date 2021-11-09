@@ -42,18 +42,19 @@ export default (
 
   const hasCSSModules = descriptor.styles.some((s) => s.module);
   const injectStyleToData = hasCSSModules
-    ? `var origin = script.initData;
-    var originProto = script.prototype?script.prototype.initData:null;
-    script.initData = origin
-    ? function () {
+    ? `var origin = typeof script === 'function'
+    ? (script.prototype.initData || __noData)
+    : (script.initData || __noData);
+    function __noData() {
+      return {$style: $style};
+    }
+    function __finalInitData() {
         return Object.assign({}, origin.call(this), {$style: $style});
     }
-    : originProto
-    ? function () {
-      return Object.assign({}, originProto.call(this), {$style: $style});
-    }
-    : function () {
-      return {$style: $style};
+    if (typeof script === 'function') {
+      script.prototype.initData = __finalInitData;
+    } else {
+      script.initData = __finalInitData;
     }`
     : '';
 
