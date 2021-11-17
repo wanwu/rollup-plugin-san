@@ -32,7 +32,7 @@ export default (
 
   const templateImport = genTemplate(descriptor, scopeId);
   const scriptImport = genScript(descriptor, scopeId);
-  const stylesImport = genStyle(descriptor, scopeId, options.preprocessStyles);
+  const stylesImport = genStyle(descriptor, scopeId, !!options.styleCompileOptions?.preprocessLang);
 
   let templateType = 'template';
   const anode = options.templateCompileOptions?.compileANode;
